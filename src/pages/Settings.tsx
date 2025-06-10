@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { Currency, DistanceUnit } from '../types';
-import { MoonIcon, SunIcon, HelpCircleIcon, ShieldIcon, DatabaseIcon, UserIcon, AlertTriangleIcon, CoinsIcon, RulerIcon } from 'lucide-react';
+import { Currency, DistanceUnit, VolumeUnit } from '../types';
+import TestModeSection from '../components/TestModeSection';
+import { MoonIcon, SunIcon, HelpCircleIcon, ShieldIcon, DatabaseIcon, UserIcon, AlertTriangleIcon, CoinsIcon, RulerIcon, DropletIcon } from 'lucide-react';
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +25,11 @@ const Settings: React.FC = () => {
   const distanceUnits: { value: DistanceUnit; label: string }[] = [
     { value: 'km', label: 'Kilometers' },
     { value: 'mi', label: 'Miles' }
+  ];
+
+  const volumeUnits: { value: VolumeUnit; label: string }[] = [
+    { value: 'L', label: 'Liters' },
+    { value: 'gal', label: 'Gallons' }
   ];
 
   const handleExportData = () => {
@@ -206,6 +212,26 @@ const Settings: React.FC = () => {
             ))}
           </select>
         </div>
+
+        <div className="p-4">
+          <div className="flex items-center mb-3">
+            <DropletIcon size={20} className="text-blue-500 mr-2" />
+            <h3 className="text-sm font-medium text-gray-800 dark:text-white">
+              Volume Unit
+            </h3>
+          </div>
+          <select
+            value={settings.volumeUnit}
+            onChange={(e) => updateSettings({ volumeUnit: e.target.value as VolumeUnit })}
+            className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {volumeUnits.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
         
         <div className="p-4">
           <h3 className="text-sm font-medium text-gray-800 dark:text-white mb-3 flex items-center">
@@ -287,6 +313,8 @@ const Settings: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        <TestModeSection />
         
         <div className="p-4">
           <h3 className="text-sm font-medium text-gray-800 dark:text-white mb-3 flex items-center">

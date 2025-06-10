@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { getCurrentDateString, getCurrentTimeString } from '../utils/dateHelpers';
-import { ChevronLeftIcon, CarFrontIcon, BanknoteIcon, CreditCardIcon, SmartphoneIcon } from 'lucide-react';
+import { ChevronLeftIcon, CarFrontIcon, BanknoteIcon, CreditCardIcon, SmartphoneIcon, DollarSignIcon } from 'lucide-react';
 
 const AddTrip: React.FC = () => {
   const navigate = useNavigate();
-  const { addTrip, currentDate } = useAppContext();
+  const { addTrip, currentDate, settings } = useAppContext();
   
   const [tripData, setTripData] = useState({
     date: currentDate,
@@ -32,6 +32,20 @@ const AddTrip: React.FC = () => {
     e.preventDefault();
     addTrip(tripData);
     navigate('/trips');
+  };
+  
+  const getCurrencySymbol = () => {
+    const symbols: { [key: string]: string } = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      AUD: 'A$',
+      CAD: 'C$',
+      CHF: 'Fr.',
+      JPY: '¥',
+      CNY: '¥'
+    };
+    return symbols[settings.currency] || '€';
   };
   
   return (
@@ -95,7 +109,8 @@ const AddTrip: React.FC = () => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Fare Amount ($)
+              <DollarSignIcon size={16} className="inline mr-1" />
+              Fare Amount ({getCurrencySymbol()})
             </label>
             <input
               type="number"
@@ -110,7 +125,8 @@ const AddTrip: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Tip Amount ($)
+              <DollarSignIcon size={16} className="inline mr-1" />
+              Tip Amount ({getCurrencySymbol()})
             </label>
             <input
               type="number"
@@ -126,7 +142,7 @@ const AddTrip: React.FC = () => {
         
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Distance (miles)
+            Distance ({settings.distanceUnit})
           </label>
           <input
             type="number"
