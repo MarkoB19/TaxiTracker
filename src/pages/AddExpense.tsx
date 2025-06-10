@@ -114,28 +114,27 @@ const AddExpense: React.FC = () => {
           </label>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { value: 'fuel', label: 'Fuel', emoji: '⛽' },
-              { value: 'maintenance', label: 'Maintenance', emoji: '🔧' },
-              { value: 'insurance', label: 'Insurance', emoji: '📝' },
-              { value: 'license', label: 'License', emoji: '🪪' },
-              { value: 'cleaning', label: 'Cleaning', emoji: '🧽' },
-              { value: 'parking', label: 'Parking', emoji: '🅿️' },
-              { value: 'tolls', label: 'Tolls', emoji: '🛣️' },
-              { value: 'food', label: 'Food', emoji: '🍔' },
-              { value: 'other', label: 'Other', emoji: '📋' }
+              { value: 'fuel', label: 'Fuel' },
+              { value: 'maintenance', label: 'Maintenance' },
+              { value: 'insurance', label: 'Insurance' },
+              { value: 'license', label: 'License' },
+              { value: 'cleaning', label: 'Cleaning' },
+              { value: 'parking', label: 'Parking' },
+              { value: 'tolls', label: 'Tolls' },
+              { value: 'food', label: 'Food' },
+              { value: 'other', label: 'Other' }
             ].map((category) => (
               <button
                 key={category.value}
                 type="button"
                 onClick={() => setExpenseData(prev => ({ ...prev, category: category.value as any }))}
-                className={`flex flex-col items-center justify-center py-3 px-2 rounded-lg border ${
+                className={`py-3 px-3 rounded-lg border text-center ${
                   expenseData.category === category.value
                     ? 'bg-red-50 border-red-500 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-400'
                     : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
                 }`}
               >
-                <span className="text-lg mb-1">{category.emoji}</span>
-                <span className="text-xs font-medium">{category.label}</span>
+                <span className="text-sm font-medium">{category.label}</span>
               </button>
             ))}
           </div>
@@ -163,7 +162,7 @@ const AddExpense: React.FC = () => {
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             <FileTextIcon size={16} className="inline mr-1" />
-            Description *
+            Description
           </label>
           <textarea
             name="description"
@@ -172,7 +171,6 @@ const AddExpense: React.FC = () => {
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
             placeholder="Describe the expense..."
-            required
           ></textarea>
         </div>
         

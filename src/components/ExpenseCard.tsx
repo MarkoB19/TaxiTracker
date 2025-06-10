@@ -10,29 +10,6 @@ interface ExpenseCardProps {
   onDelete: (id: string) => void;
 }
 
-const getExpenseCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'fuel':
-      return <span className="emoji">⛽</span>;
-    case 'maintenance':
-      return <span className="emoji">🔧</span>;
-    case 'insurance':
-      return <span className="emoji">📝</span>;
-    case 'license':
-      return <span className="emoji">🪪</span>;
-    case 'cleaning':
-      return <span className="emoji">🧽</span>;
-    case 'parking':
-      return <span className="emoji">🅿️</span>;
-    case 'tolls':
-      return <span className="emoji">🛣️</span>;
-    case 'food':
-      return <span className="emoji">🍔</span>;
-    default:
-      return <span className="emoji">📋</span>;
-  }
-};
-
 const getCategoryColor = (category: string): string => {
   switch (category) {
     case 'fuel':
@@ -202,7 +179,6 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
           {formatCurrency(expense.amount, settings.currency)}
         </h3>
         <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${getCategoryColor(expense.category)}`}>
-          {getExpenseCategoryIcon(expense.category)}
           <span className="font-medium capitalize">
             {expense.category}
           </span>
@@ -210,7 +186,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onEdit, onDelete }) 
       </div>
       
       <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-        <p>{expense.description}</p>
+        {expense.description && <p>{expense.description}</p>}
         {expense.category === 'fuel' && expense.volume && (
           <p className="mt-1 text-xs text-gray-500">
             Volume: {expense.volume} {settings.volumeUnit}
