@@ -36,6 +36,77 @@ export interface PaymentMethodBreakdown {
   tripCount: number;
 }
 
+export interface TimeOfDayAnalysis {
+  hour: number;
+  tripCount: number;
+  totalIncome: number;
+  percentage: number;
+}
+
+export interface DayOfWeekAnalysis {
+  dayName: string;
+  dayIndex: number;
+  tripCount: number;
+  totalIncome: number;
+  percentage: number;
+}
+
+export const calculateTimeOfDayAnalysis = (trips: Trip[]): TimeOfDayAnalysis[] => {
+  const hourlyData: { [hour: number]: { count: number; income: number } } = {};
+  
+  // Initialize all hours
+  for (let i = 0; i < 24; i++) {
+    hourlyData[i] = { count: 0, income: 0 };
+  }
+  
+  // Process trips
+  trips.forEach(trip => {
+    const startHour = parseInt(trip.startTime.split(':')[0]);
+    hourlyData[startHour].count++;
+    hourlyData[startHour].income += calculateTripTotal(trip);
+  });
+  
+  const totalTrips = trips.length;
+  
+  return Object.entries(hourlyData)
+    .map(([hour, data]) => ({
+      hour: parseInt(hour),
+      tripCount: data.count,
+      totalIncome: data.income,
+      percentage: totalTrips > 0 ? (data.count / totalTrips) * 100 : 0
+    }))
+    .sort((a, b) => b.tripCount - a.tripCount);
+};
+
+export const calculateDayOfWeekAnalysis = (trips: Trip[]): DayOfWeekAnalysis[] => {
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayData: { [day: number]: { count: number; income: number } } = {};
+  
+  // Initialize all days
+  for (let i = 0; i < 7; i++) {
+    dayData[i] = { count: 0, income: 0 };
+  }
+  
+  // Process trips
+  trips.forEach(trip => {
+    const dayOfWeek = new Date(trip.date).getDay();
+    dayData[dayOfWeek].count++;
+    dayData[dayOfWeek].income += calculateTripTotal(trip);
+  });
+  
+  const totalTrips = trips.length;
+  
+  return Object.entries(dayData)
+    .map(([dayIndex, data]) => ({
+      dayName: dayNames[parseInt(dayIndex)],
+      dayIndex: parseInt(dayIndex),
+      tripCount: data.count,
+      totalIncome: data.income,
+      percentage: totalTrips > 0 ? (data.count / totalTrips) * 100 : 0
+    }))
+    .sort((a, b) => b.tripCount - a.tripCount);
+};
+
 export const calculateExpenseCategoryBreakdown = (expenses: Expense[]): CategoryBreakdown[] => {
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
   

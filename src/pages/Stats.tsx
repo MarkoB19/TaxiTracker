@@ -6,10 +6,12 @@ import {
   createMonthlySummary, 
   calculateFuelEfficiency,
   calculateExpenseCategoryBreakdown,
-  calculatePaymentMethodBreakdown
+  calculatePaymentMethodBreakdown,
+  calculateTimeOfDayAnalysis,
+  calculateDayOfWeekAnalysis
 } from '../utils/calculations';
 import { formatCurrency, formatDistance, getWeekRange, getMonthYear } from '../utils/dateHelpers';
-import { BarChart2Icon, CalendarIcon, TrendingUpIcon, BarChartIcon, PieChartIcon, CreditCardIcon } from 'lucide-react';
+import { BarChart2Icon, CalendarIcon, TrendingUpIcon, BarChartIcon, PieChartIcon, CreditCardIcon, ClockIcon, Calendar } from 'lucide-react';
 
 const Stats: React.FC = () => {
   const { trips, expenses, currentDate, settings } = useAppContext();
@@ -31,15 +33,9 @@ const Stats: React.FC = () => {
   const expenseBreakdown = calculateExpenseCategoryBreakdown(expenses);
   const paymentBreakdown = calculatePaymentMethodBreakdown(trips);
 
-  const getEfficiencyLabel = () => {
-    if (settings.distanceUnit === 'km' && settings.volumeUnit === 'L') {
-      return 'L/100km';
-    }
-    if (settings.distanceUnit === 'mi' && settings.volumeUnit === 'gal') {
-      return 'MPG';
-    }
-    return `${settings.volumeUnit}/${settings.distanceUnit}`;
-  };
+  // Calculate time and day analysis
+  const timeAnalysis = calculateTimeOfDayAnalysis(trips);
+  const dayAnalysis = calculateDayOfWeekAnalysis(trips);
 
   const formatEfficiency = () => {
     if (efficiency === 0) return 'N/A';
@@ -57,6 +53,10 @@ const Stats: React.FC = () => {
     if (costPerDistance === 0) return 'N/A';
     const unit = settings.distanceUnit === 'km' ? 'km' : 'mile';
     return `${formatCurrency(costPerDistance, settings.currency)}/${unit}`;
+  };
+
+  const formatHour = (hour: number) => {
+    return `${hour.toString().padStart(2, '0')}:00`;
   };
 
   const renderSummary = () => {
@@ -347,6 +347,68 @@ const Stats: React.FC = () => {
               {formatCostPerDistance()}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Time of Day Analysis */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+          <ClockIcon size={20} className="mr-1 text-orange-500" />
+          Peak Hours Analysis
+        </h3>
+        <div className="space-y-3">
+          {timeAnalysis.slice(0, 5).map(({ hour, tripCount, totalIncome, percentage }) => (
+            <div key={hour} className="relative">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {formatHour(hour)} ({tripCount} trips)
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {formatCurrency(totalIncome, settings.currency)}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-orange-500 rounded-full"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {percentage.toFixed(1)}%
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Day of Week Analysis */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+          <Calendar size={20} className="mr-1 text-indigo-500" />
+          Best Days Analysis
+        </h3>
+        <div className="space-y-3">
+          {dayAnalysis.map(({ dayName, tripCount, totalIncome, percentage }) => (
+            <div key={dayName} className="relative">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {dayName} ({tripCount} trips)
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {formatCurrency(totalIncome, settings.currency)}
+                </span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-indigo-500 rounded-full"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {percentage.toFixed(1)}%
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
