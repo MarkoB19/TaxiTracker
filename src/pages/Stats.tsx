@@ -43,7 +43,14 @@ const Stats: React.FC = () => {
 
   const formatEfficiency = () => {
     if (efficiency === 0) return 'N/A';
-    return `${efficiency.toFixed(1)} ${getEfficiencyLabel()}`;
+    
+    if (settings.distanceUnit === 'km' && settings.volumeUnit === 'L') {
+      return `${efficiency.toFixed(1)} L/100km`;
+    }
+    if (settings.distanceUnit === 'mi' && settings.volumeUnit === 'gal') {
+      return `${efficiency.toFixed(1)} MPG`;
+    }
+    return `${efficiency.toFixed(1)} ${settings.volumeUnit}/${settings.distanceUnit}`;
   };
 
   const formatCostPerDistance = () => {
